@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Tartas de Julita | Zaragoza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        html { scroll-behavior: smooth; }
+        section[id] { scroll-margin-top: 4rem; }
+
+        /* Capas de la tarta: aparecen al hacer scroll */
+        .layer { opacity: 0; transform: translateY(-40px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+        .layer.on { opacity: 1; transform: translateY(0); }
+        .step { opacity: 0; transform: translateY(20px); transition: all .5s ease; position: absolute; inset: 0; pointer-events: none; }
+        .step.on { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .chip { animation: pop .5s ease both; }
+        @keyframes pop { from { opacity: 0; transform: scale(.7) translateY(8px); } to { opacity: 1; transform: none; } }
+        .sparkle { animation: twinkle 2s ease-in-out infinite; }
+        @keyframes twinkle { 50% { opacity: .25; } }
+    </style>
+</head>
+<body class="bg-amber-50/30 text-stone-800">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🍰</span>
+                <span class="text-xl font-bold tracking-tight text-amber-900">Las Tartas de Julita</span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-stone-600">
+                <a href="#inicio" class="hover:text-amber-700 transition">Inicio</a>
+                <a href="#tarta" class="hover:text-amber-700 transition">Nuestra tarta</a>
+                <a href="#carta" class="hover:text-amber-700 transition">Carta</a>
+                <a href="#opiniones" class="hover:text-amber-700 transition">Opiniones</a>
+                <a href="#contacto" class="hover:text-amber-700 transition">Ubicación y Horarios</a>
+            </nav>
+            <a href="#" data-glovo target="_blank" rel="noopener noreferrer" class="bg-[#FFC244] hover:bg-[#f5b52d] text-stone-900 text-sm font-semibold px-4 py-2 rounded-full transition shadow-sm">
+                Pedir en Glovo 🛵
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative bg-gradient-to-b from-amber-100/60 to-amber-50/30 py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="inline-block bg-amber-200/70 text-amber-900 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider mb-4">
+                Tienda de tartas artesanales en Zaragoza
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold text-stone-900 mb-6 leading-tight">
+                Tartas de queso y sabores originales inigualables
+            </h1>
+            <p class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto">
+                Ingredientes de la más alta calidad, texturas perfectas y una gran variedad de tartas con una pinta tremenda en pleno Casco Antiguo.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#contacto" class="bg-amber-700 hover:bg-amber-800 text-white font-medium px-8 py-3 rounded-full shadow-md transition">
+                    Cómo llegar y Horarios
+                </a>
+                <a href="#opiniones" class="bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 font-medium px-8 py-3 rounded-full transition">
+                    Ver opiniones (4.2 ⭐)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlights Section -->
+    <section class="py-16 px-4 bg-white">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 rounded-2xl bg-amber-50/55 border border-amber-100 text-center">
+                <div class="text-3xl mb-3">🧀</div>
+                <h3 class="text-xl font-bold text-stone-900 mb-2">Tartas de Queso Únicas</h3>
+                <p class="text-stone-600 text-sm">Diferentes sabores riquísimos (incluyendo pistacho) con una textura ideal.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-amber-50/55 border border-amber-100 text-center">
+                <div class="text-3xl mb-3">✨</div>
+                <h3 class="text-xl font-bold text-stone-900 mb-2">Ingredientes Premium</h3>
+                <p class="text-stone-600 text-sm">El secreto está en la calidad de cada ingrediente, notándose en cada porción.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-amber-50/55 border border-amber-100 text-center">
+                <div class="text-3xl mb-3">💶</div>
+                <h3 class="text-xl font-bold text-stone-900 mb-2">Precio Accesible</h3>
+                <p class="text-stone-600 text-sm">Disfruta por un precio estimado de entre 10€ y 20€ por persona.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== NUEVA SECCIÓN: Tarta que se monta al hacer scroll ===== -->
+    <section id="tarta" class="relative h-[600vh]">
+        <div id="stage" class="sticky top-16 h-[calc(100vh-4rem)] overflow-hidden">
+            <div id="cakeCanvas" class="absolute inset-0"></div>
+            <div id="steps" class="absolute inset-0">
+                <div class="step flex items-end md:items-center p-4 pb-20 md:p-16 justify-start"><div class="max-w-sm bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-2xl"><h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Tarta de queso artesanal</h2><p class="text-stone-800">Una tarta que se come con los ojos antes de probarla. Sigue bajando y descubre cómo se hace.</p></div></div>
+                <div class="step flex items-end md:items-center p-4 pb-20 md:p-16 justify-end"><div class="max-w-sm bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-2xl"><h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Capa por capa</h2><p class="text-stone-800">Base de galleta crujiente y crema de queso sedosa, horneada despacio hasta lograr la textura perfecta.</p></div></div>
+                <div class="step flex items-end md:items-center p-4 pb-20 md:p-16 justify-start"><div class="max-w-sm bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-2xl"><h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">El toque final</h2><p class="text-stone-800">Un coulis brillante de frutos rojos y fruta fresca que remata cada porción.</p></div></div>
+                <div class="step flex items-end md:items-center p-4 pb-20 md:p-16 justify-center"><div class="max-w-sm bg-white/25 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-2xl"><h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Ven a probarla</h2><p class="text-stone-800">Te esperamos en Plaza de los Sitios, 16. Pregunta por los sabores del día.</p><div class="flex flex-wrap gap-2 mt-4"><a href="#contacto" class="inline-block bg-amber-700 text-white text-sm font-medium px-5 py-2.5 rounded-full">Cómo llegar</a><a href="#" data-glovo target="_blank" rel="noopener noreferrer" class="inline-block bg-[#FFC244] text-stone-900 text-sm font-semibold px-5 py-2.5 rounded-full">Pedir en Glovo 🛵</a></div></div></div>
+            </div>
+            <div class="absolute bottom-4 inset-x-4 max-w-md mx-auto">
+                <div class="h-1.5 bg-white/50 rounded-full overflow-hidden"><div id="bar" class="h-full bg-amber-700" style="width:0%"></div></div>
+                <div id="chips" class="flex flex-wrap justify-center gap-2 mt-2 min-h-[2rem]"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carta (datos de Glovo) -->
+    <section id="carta" class="py-16 px-4 bg-amber-50/40">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-8">
+                <span class="inline-block bg-[#FFC244] text-stone-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">Nuevo en Glovo</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-900 mb-2">Nuestra carta a domicilio</h2>
+                <p class="text-stone-600 text-sm max-w-xl mx-auto">Las Tartas De Julita · Zaragoza. Envío gratis con Glovo Prime. Hay un pedido mínimo; si no llegas, puedes pagar un pequeño recargo.</p>
+            </div>
+            <div class="sticky top-16 z-40 -mx-4 px-4 py-3 bg-amber-50/90 backdrop-blur flex gap-2 overflow-x-auto"><a href="#c-porciones" class="whitespace-nowrap bg-white border border-stone-200 hover:border-amber-400 text-stone-700 text-sm font-medium px-4 py-2 rounded-full transition">Porciones</a><a href="#c-pequena" class="whitespace-nowrap bg-white border border-stone-200 hover:border-amber-400 text-stone-700 text-sm font-medium px-4 py-2 rounded-full transition">Tarta pequeña</a><a href="#c-helados" class="whitespace-nowrap bg-white border border-stone-200 hover:border-amber-400 text-stone-700 text-sm font-medium px-4 py-2 rounded-full transition">Helados</a><a href="#c-cookiecake" class="whitespace-nowrap bg-white border border-stone-200 hover:border-amber-400 text-stone-700 text-sm font-medium px-4 py-2 rounded-full transition">Porciones Cookiecake, masa de galleta</a></div>
+            <h3 id="c-porciones" class="text-2xl font-bold text-stone-900 mt-10 mb-4 scroll-mt-40">Porciones</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-clasica.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/06e96155a1ef15839a612a0daa6d4f75e2614fadaf4086fb8176c50bd5da9d9b?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Clásica" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Clásica</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-lotus.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/d7c465779d633c8ea09426f1ac158f8b38719050f6bf9ddf4c56c9674ceaf0ea?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Lotus" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Lotus</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-lemon-pie.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/948cce62c0aab50237383a8c6ff2dc3a7346920a612b3c5a94f0d03eeca6e23c?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Lemon Pie" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Lemon Pie</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-happy-hippo.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/37a61a998fdb9f9736bad5a1458bb32b921902b5012467143b965c89089e0f24?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Happy Hippo" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Happy Hippo</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-cookie-dough-mms.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/e158bbff0f531df6d282b1c5aa936cf9ffa4a072ecb2d772da7c050aff4877af?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Cookie Dough Mms" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Cookie Dough Mms</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-de-queso-porcion-phoskitos.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/75a5e70b087f08052cfaddc70ecec958d5338b3ca33175c11b4fd608c6ee6d14?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta De Queso Porción Phoskitos" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta De Queso Porción Phoskitos</h4></div>
+                    </a></div>
+                <h3 id="c-pequena" class="text-2xl font-bold text-stone-900 mt-10 mb-4 scroll-mt-40">Tarta pequeña</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-pequena-kinder.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/fcde0a4ac382ff6eeffb477e8bb28a91220adf3703a506f06495e8753e2f23ed?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta Pequeña Kinder" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta Pequeña Kinder</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-pequena-de-lotus.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/72aa62e48e76fc72b05b78d16581af91fc4c17580e48de5e071f44d38cc38453?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta Pequeña De Lotus" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta Pequeña De Lotus</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/tarta-pequena-clasica.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/c803befae234cdb9ea77897b10bf6353a4a1cac49abbac3bce02d161cad16d37?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Tarta Pequeña Clásica" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Tarta Pequeña Clásica</h4></div>
+                    </a></div>
+                <h3 id="c-helados" class="text-2xl font-bold text-stone-900 mt-10 mb-4 scroll-mt-40">Helados</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/helado-lotus.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/7d4afa8423c37a97c1086f6581930c37f0888827a353ff43fa0592b99b5bad47?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Helado Lotus" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Helado Lotus</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/helado-kinder.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/68ba6dd599026d58c7c23291e55bc283b82000a0899ae743dfe32a71363877f0?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Helado Kinder" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Helado Kinder</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/helado-pistacho.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/e16b4158e86a56052fea0b1b70fc872af1e0b249e14ded44bf28b99d9786062a?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Helado Pistacho" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Helado Pistacho</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/helado-de-tarta-de-queso-clasica.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/af65dedf7e40b39498b1d5889ab463c19210238381f81dcecdade8298367577b?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Helado De Tarta De Queso Clásica" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Helado De Tarta De Queso Clásica</h4></div>
+                    </a></div>
+                <h3 id="c-cookiecake" class="text-2xl font-bold text-stone-900 mt-10 mb-4 scroll-mt-40">Porciones Cookiecake, masa de galleta</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/porcion-cookiecake-nutella.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/16671e59533fcfbdcc46303d14a9d85aeb206f26f8b80733846e531bdc209906?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Porción Cookiecake Nutella" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Porción Cookiecake Nutella</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/porcion-cookiecake-nocilla-blanca-y-oreo.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/01801651c7d8f939e2f146645135ec3b03cfb6d1bbe77e003a29405ae2b0ef77?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Porción Cookiecake Nocilla Blanca Y Oreo" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Porción Cookiecake Nocilla Blanca Y Oreo</h4></div>
+                    </a><a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="group bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+                        <div class="relative aspect-square bg-amber-50"><img src="fotos/porcion-cookiecake-dulce-de-leche-y-lotus.jpg" data-f="https://glovo.dhmedia.io/image/menus-glovo/products/a8bb1c0e5480155e4739438bf69b4013dedcbad5b88a1a676f60e542120fea4c?t=W3sicmVzaXplIjp7Im1vZGUiOiJmaXQiLCJ3aWR0aCI6MzIwLCJoZWlnaHQiOjMyMH19XQ==" alt="Porción Cookiecake Dulce De Leche Y Lotus" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}"><span class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#FFC244] text-stone-900 font-bold flex items-center justify-center shadow">+</span></div>
+                        <div class="p-3 flex flex-col gap-1"><h4 class="text-sm font-semibold text-stone-900 leading-snug">Porción Cookiecake Dulce De Leche Y Lotus</h4></div>
+                    </a></div>
+                
+            <div class="max-w-3xl mx-auto mt-16">
+                <h3 class="text-2xl font-bold text-stone-900 mb-4 text-center">Preguntas sobre pedir en Glovo</h3>
+                <div class="space-y-3"><details class="group bg-white border border-stone-200 rounded-xl px-5 py-4"><summary class="cursor-pointer font-semibold text-stone-900 flex justify-between items-center list-none">¿Cuánto tarda la entrega a domicilio en Zaragoza?<span class="text-amber-700 group-open:rotate-45 transition text-xl leading-none">+</span></summary><p class="text-stone-600 text-sm mt-3">Al introducir tu dirección en Glovo verás el tiempo estimado para tu zona, y también en la página de pago.</p></details><details class="group bg-white border border-stone-200 rounded-xl px-5 py-4"><summary class="cursor-pointer font-semibold text-stone-900 flex justify-between items-center list-none">¿Hay promociones?<span class="text-amber-700 group-open:rotate-45 transition text-xl leading-none">+</span></summary><p class="text-stone-600 text-sm mt-3">Busca los productos con descuento y las ofertas especiales, que Glovo marca en amarillo. A veces hay 2x1 o entrega con descuento.</p></details><details class="group bg-white border border-stone-200 rounded-xl px-5 py-4"><summary class="cursor-pointer font-semibold text-stone-900 flex justify-between items-center list-none">¿Está disponible con Glovo Prime?<span class="text-amber-700 group-open:rotate-45 transition text-xl leading-none">+</span></summary><p class="text-stone-600 text-sm mt-3">Sí. Prime es la suscripción de Glovo que da entregas gratuitas en algunos establecimientos, entre ellos el nuestro.</p></details><details class="group bg-white border border-stone-200 rounded-xl px-5 py-4"><summary class="cursor-pointer font-semibold text-stone-900 flex justify-between items-center list-none">¿Hay un pedido mínimo?<span class="text-amber-700 group-open:rotate-45 transition text-xl leading-none">+</span></summary><p class="text-stone-600 text-sm mt-3">Sí. Si no llegas al mínimo, puedes pagar un pequeño recargo para que tu pedido se entregue igualmente.</p></details><details class="group bg-white border border-stone-200 rounded-xl px-5 py-4"><summary class="cursor-pointer font-semibold text-stone-900 flex justify-between items-center list-none">¿Puedo pedir para otra persona o como regalo?<span class="text-amber-700 group-open:rotate-45 transition text-xl leading-none">+</span></summary><p class="text-stone-600 text-sm mt-3">Claro. Solo tienes que poner la dirección de entrega en Zaragoza y, antes de confirmar, añadir los datos de contacto de quien lo recibe y un comentario para el repartidor.</p></details></div>
+            </div>
+            <div class="text-center mt-12">
+                <a data-glovo href="#" target="_blank" rel="noopener noreferrer" class="inline-block bg-[#FFC244] hover:bg-[#f5b52d] text-stone-900 font-semibold px-8 py-3 rounded-full shadow-md transition">🛵 Pedir en Glovo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Opiniones Section -->
+    <section id="opiniones" class="py-16 px-4 bg-stone-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-stone-900 mb-2">Lo que dicen nuestros clientes</h2>
+                <div class="flex items-center justify-center space-x-2 text-amber-600 text-lg font-semibold">
+                    <span>★★★★★</span>
+                    <span class="text-stone-700">4.2 / 5 (17 opiniones)</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-amber-500 mb-2">★★★★★</div>
+                        <p class="text-stone-700 text-sm italic mb-4">"Muy ricas y de diversos sabores. La textura es perfecta y se nota la calidad de los ingredientes."</p>
+                    </div>
+                    <div class="text-xs font-semibold text-stone-500">— J C (Local Guide)</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-amber-500 mb-2">★★★★★</div>
+                        <p class="text-stone-700 text-sm italic mb-4">"Tartas muy muy ricas. Sabores muy originales. Textura perfecta. ¡Gran variedad y todas con una pinta tremenda!"</p>
+                    </div>
+                    <div class="text-xs font-semibold text-stone-500">— Lorena</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-amber-500 mb-2">★★★★★</div>
+                        <p class="text-stone-700 text-sm italic mb-4">"Estuvimos ayer por la mañana, compramos tres porciones y estaban buenísimas. La dependienta fue muy maja y nos explicó todo. ¡Volveremos!"</p>
+                    </div>
+                    <div class="text-xs font-semibold text-stone-500">— Miriam Fernández</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Location Section -->
+    <section id="contacto" class="py-16 px-4 bg-white">
+        <div class="max-w-4xl mx-auto bg-amber-900 text-amber-50 rounded-3xl p-8 md:p-12 shadow-lg">
+            <h2 class="text-3xl font-bold mb-6 text-center">Visítanos en Zaragoza</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm md:text-base">
+                <div class="space-y-4">
+                    <p class="flex items-start space-x-3">
+                        <span class="text-xl">📍</span>
+                        <span><strong>Dirección:</strong> Pl. de los Sitios, 16, Casco Antiguo, 50001 Zaragoza</span>
+                    </p>
+                    <p class="flex items-start space-x-3">
+                        <span class="text-xl">💶</span>
+                        <span><strong>Precio medio:</strong> €10 - €20 por persona</span>
+                    </p>
+                    <p class="flex items-start space-x-3">
+                        <span class="text-xl">🕒</span>
+                        <span><strong>Horario:</strong> Cierra pronto a las 9:00 p.m. · Abre a las 10:00 a.m.</span>
+                    </p>
+                </div>
+                <div class="flex flex-col justify-center items-center md:items-start space-y-4">
+                    <p class="text-amber-200/90 text-center md:text-left">¿Quieres encargar tu tarta o consultar opciones disponibles para hoy?</p>
+                    <!-- Enlace exacto proporcionado -->
+                    <a href="https://maps.app.goo.gl/uEggkLjSGKmNztZn8" target="_blank" rel="noopener noreferrer" class="bg-white text-amber-900 font-semibold px-6 py-3 rounded-full hover:bg-amber-100 transition shadow-sm text-center w-full md:w-auto">
+                        Ver indicaciones en Google Maps
+                    </a>
+                    <a href="#" data-glovo target="_blank" rel="noopener noreferrer" class="bg-[#FFC244] text-stone-900 font-semibold px-6 py-3 rounded-full hover:bg-[#f5b52d] transition shadow-sm text-center w-full md:w-auto">
+                        🛵 Pedir a domicilio con Glovo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm">
+        <p>&copy; 2026 Las Tartas de Julita. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const CHIPS = ['🧀 Queso cremoso', '🍪 Galleta + 🧀 Queso', '🍓 Frutos rojos', '📍 Zaragoza'];
+        const section = document.getElementById('tarta'), stage = document.getElementById('stage');
+        const stepsEl = document.getElementById('steps'), chipsEl = document.getElementById('chips'), bar = document.getElementById('bar');
+
+        /* ---------- Escena 3D ---------- */
+        const wrap = document.getElementById('cakeCanvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+        renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        wrap.appendChild(renderer.domElement);
+
+        scene.add(new THREE.HemisphereLight(0xffffff, 0xf3d9b0, 0.7));
+        const dl = new THREE.DirectionalLight(0xfff1dc, 1.1); dl.position.set(5, 8, 5); dl.castShadow = true;
+        dl.shadow.mapSize.set(2048, 2048); Object.assign(dl.shadow.camera, { left: -5, right: 5, top: 6, bottom: -5, near: 1, far: 25 });
+        dl.shadow.bias = -0.0005; scene.add(dl);
+        const rim = new THREE.DirectionalLight(0xbfe0ff, 0.5); rim.position.set(-5, 3, -4); scene.add(rim);
+
+        // texturas procedurales (migas, grano, brillo)
+        function tex(base, n, r, cols, a, srgb = true) {
+            const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d');
+            x.fillStyle = base; x.fillRect(0, 0, 512, 512); x.globalAlpha = a;
+            for (let i = 0; i < n; i++) { x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.random() * 512, Math.random() * 512, Math.random() * r + .6, 0, 7); x.fill(); }
+            const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(.5, .5); t.anisotropy = 4;
+            if (srgb) t.encoding = THREE.sRGBEncoding; return t;
+        }
+        const crustMat = new THREE.MeshStandardMaterial({ map: tex('#b5722f', 9000, 3.5, ['#8a4f1d', '#d9a35c', '#6f3d14', '#e6b878'], .85), bumpMap: tex('#808080', 9000, 3.5, ['#000', '#fff', '#444', '#ccc'], .9, false), bumpScale: 3, roughness: .95 });
+        const fillMat = new THREE.MeshStandardMaterial({ map: tex('#fbebbc', 5000, 2.5, ['#f3d98f', '#fff7dc', '#f7e2a6'], .35), bumpMap: tex('#808080', 3000, 2, ['#777', '#999'], .5, false), bumpScale: .6, roughness: .55 });
+        const glazeMat = new THREE.MeshPhysicalMaterial({ color: 0xb01e3c, roughness: .12, clearcoat: 1, clearcoatRoughness: .08 });
+        const berryMat = new THREE.MeshStandardMaterial({ color: 0xc8102e, roughness: .35 });
+        const blueMat = new THREE.MeshStandardMaterial({ color: 0x2b3a8c, roughness: .3 });
+
+        const cake = new THREE.Group(); cake.position.y = -1; scene.add(cake);
+        const sliceG = new THREE.Group(); cake.add(sliceG);
+
+        // plato de cerámica (torno) + sombra sobre el fondo
+        const prof = [[0, 0], [2.0, 0], [2.35, .06], [2.65, .2], [2.68, .23], [2.6, .22], [2.3, .1], [2.0, .04], [0, .04]].map(v => new THREE.Vector2(v[0], v[1]));
+        const plate = new THREE.Mesh(new THREE.LatheGeometry(prof, 96), new THREE.MeshStandardMaterial({ color: 0xfbfaf8, roughness: .25, side: THREE.DoubleSide }));
+        plate.position.y = -0.04; plate.castShadow = plate.receiveShadow = true; cake.add(plate);
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: .22 }));
+        floor.rotation.x = -Math.PI / 2; floor.position.y = -1.05; floor.receiveShadow = true; scene.add(floor);
+
+        // tarta con porción cortada (formas extruidas con bordes biselados)
+        const M = -Math.PI / 2, A0 = M - 0.44, A1 = M + 0.44;
+        function wedge(a0, a1, r, h, material) {
+            const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.absarc(0, 0, r, a0, a1, false); sh.lineTo(0, 0);
+            const g = new THREE.ExtrudeGeometry(sh, { depth: h, bevelEnabled: true, bevelThickness: .025, bevelSize: .025, bevelSegments: 3, curveSegments: 64 });
+            g.rotateX(-Math.PI / 2);
+            const m = new THREE.Mesh(g, material); m.castShadow = m.receiveShadow = true; return m;
+        }
+        const defs = [[1.62, .4, crustMat, .04], [1.6, .85, fillMat, .44], [1.6, .07, glazeMat, 1.29]];
+        const L = [], SL = [];
+        defs.forEach(([r, h, m, y0]) => {
+            const g = new THREE.Group(); g.add(wedge(A1, A0 + Math.PI * 2, r, h, m)); g.userData.y0 = g.position.y = y0; cake.add(g); L.push(g);
+            const s = new THREE.Group(); s.add(wedge(A0, A1, r, h, m)); s.userData.y0 = s.position.y = y0; sliceG.add(s); SL.push(s);
+        });
+        function raspberry() {
+            const g = new THREE.Group();
+            for (let i = 0; i < 22; i++) {
+                const k = i + .5, phi = Math.acos(1 - k / 22), th = Math.PI * (1 + Math.sqrt(5)) * k;
+                const b = new THREE.Mesh(new THREE.SphereGeometry(.07, 10, 10), berryMat);
+                b.position.set(Math.sin(phi) * Math.cos(th) * .13, Math.cos(phi) * .11 + .08, Math.sin(phi) * Math.sin(th) * .13);
+                b.castShadow = true; g.add(b);
+            } return g;
+        }
+        function blueberry() { const b = new THREE.Mesh(new THREE.SphereGeometry(.11, 20, 20), blueMat); b.scale.y = .9; b.position.y = .1; b.castShadow = true; return b; }
+        [[1.05, .3, 'r'], [1.3, 1.2, 'b'], [.9, 2.1, 'r'], [1.3, 3.0, 'b'], [1.0, 3.8, 'r'], [.3, 1.9, 'b'], [1.35, 5.6, 'r'], [.55, 4.0, 'b']].forEach(([r, a, t]) => {
+            const o = t === 'r' ? raspberry() : blueberry(); o.position.set(r * Math.cos(a), .075, -r * Math.sin(a)); L[2].add(o);
+        });
+        const sb = raspberry(); sb.position.set(1.1 * Math.cos(M), .075, -1.1 * Math.sin(M)); SL[2].add(sb);
+
+        // motas de azúcar glas flotando
+        const N = 140, pos = new Float32Array(N * 3);
+        for (let i = 0; i < N * 3; i++) pos[i] = (Math.random() - .5) * 18;
+        const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const dust = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.05, transparent: true, opacity: .7 })); scene.add(dust);
+
+        function resize() {
+            const w = wrap.clientWidth, h = wrap.clientHeight;
+            renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resize); resize();
+
+        /* ---------- Guion de cámara ----------
+           [t, camX,camY,camZ, lookX,lookY,lookZ, giroY, despiece, fondo arriba RGB, fondo abajo RGB] */
+        const T = Math.PI * 2, R0 = 0.3;
+        const K = [
+            [0,    0,   3.0, 15,  0, 0.2, 0,   R0,         0,   205,233,250, 240,249,255],
+            [0.25, 0,   2.4, 8.5, 0, 0.3, 0,   R0 + T,     0.1, 186,224,246, 255,255,255],
+            [0.5,  4,   2.0, 9.5, 0, 0.7, 0,   R0 + 2*T,   1,   254,226,170, 255,247,230],
+            [0.75, 1.0, 1.7, 4.4, 0, 0.2, 0.6, R0 + 2*T,   0,   253,205,220, 255,240,245],
+            [1,    0,   2.5, 10,  0, 0.2, 0,   R0 + 3*T,   0,   254,226,170, 255,251,235]
+        ];
+        const ss = x => { x = Math.min(Math.max(x, 0), 1); return x * x * (3 - 2 * x); };
+        function sample(p) {
+            let i = 0; while (i < K.length - 2 && p > K[i + 1][0]) i++;
+            const a = K[i], b = K[i + 1], t = ss((p - a[0]) / (b[0] - a[0]));
+            return a.map((v, j) => v + (b[j] - v) * t);
+        }
+
+        let target = 0, cur = 0, idx = -1;
+        function readScroll() {
+            const r = section.getBoundingClientRect();
+            target = Math.min(Math.max(-r.top / (r.height - innerHeight), 0), 1);
+        }
+        window.addEventListener('scroll', readScroll, { passive: true }); readScroll();
+
+        function setScene(i) {
+            idx = i;
+            [...stepsEl.children].forEach((el, k) => el.classList.toggle('on', k === i));
+            bar.style.width = ((i + 1) / 4 * 100) + '%';
+            chipsEl.innerHTML = '';
+            for (let k = 0; k <= i; k++) {
+                const c = document.createElement('span');
+                c.className = 'chip bg-white/80 text-amber-900 text-xs font-medium px-3 py-1 rounded-full shadow-sm';
+                c.textContent = CHIPS[k]; chipsEl.appendChild(c);
+            }
+        }
+
+        function frame(time) {
+            cur += (target - cur) * 0.07;
+            const k = sample(cur);
+            camera.position.set(k[1], k[2], k[3]); camera.lookAt(k[4], k[5], k[6]);
+            cake.rotation.y = k[7];
+            for (let i = 0; i < 3; i++) { const dy = k[8] * i * 1.15; L[i].position.y = L[i].userData.y0 + dy; SL[i].position.y = SL[i].userData.y0 + dy; }
+            sliceG.position.z = 0.35 + k[8] * 0.9;
+            dust.rotation.y = time * 0.00008 + cur * 2; dust.position.y = (cur * 4) % 4 - 2;
+            stage.style.background = `linear-gradient(180deg, rgb(${k[9]|0},${k[10]|0},${k[11]|0}), rgb(${k[12]|0},${k[13]|0},${k[14]|0}))`;
+            const sc = Math.min(Math.floor(target * 4), 3);
+            if (sc !== idx) setScene(sc);
+            renderer.render(scene, camera);
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+    </script>
+<script>
+        // ✏️ Pega aquí el enlace de vuestra tienda en Glovo (Zaragoza). Todos los botones "Pedir" lo usan.
+        const GLOVO_URL = 'https://glovoapp.com/es/es/zaragoza/stores/las-tartas-de-julita-zaragoza';
+        document.querySelectorAll('[data-glovo]').forEach(a => a.href = GLOVO_URL);
+
+        // Enlaces internos (#opiniones, #contacto…): desplazan dentro de esta página
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            const id = a.getAttribute('href');
+            if (id.length < 2) return;
+            a.addEventListener('click', e => {
+                const t = document.querySelector(id);
+                if (!t) return;
+                e.preventDefault();
+                t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
