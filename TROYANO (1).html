@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TROYANO</title>
+<style>
+  :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  html,body{height:100%;margin:0;background:#000;color:#00ff41;font-family:"Courier New",monospace;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+  .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;text-align:center}
+  h1{font-size:clamp(40px,14vw,110px);margin:0;letter-spacing:.12em;text-shadow:0 0 12px #00ff41,0 0 30px #00ff41;position:relative;animation:flick 3s infinite}
+  h1::before,h1::after{content:attr(data-t);position:absolute;left:0;right:0;top:0;opacity:.7}
+  h1::before{color:#0ff;transform:translate(3px,0);clip-path:inset(0 0 60% 0);animation:gl 2.2s infinite steps(2)}
+  h1::after{color:#f0f;transform:translate(-3px,0);clip-path:inset(60% 0 0 0);animation:gl 1.7s infinite steps(2) reverse}
+  @keyframes gl{0%,90%{transform:translate(0)}92%{transform:translate(6px,-2px)}96%{transform:translate(-6px,2px)}}
+  @keyframes flick{0%,95%,100%{opacity:1}97%{opacity:.6}}
+  .term{background:rgba(0,0,0,.75);border:1px solid #00ff41;box-shadow:0 0 18px rgba(0,255,65,.4);padding:14px 18px;min-width:min(90%,340px);text-align:left;font-size:15px;min-height:70px}
+  .term span.c{animation:b 1s steps(1) infinite}
+  @keyframes b{50%{opacity:0}}
+  .links{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  a{color:#00ff41;border:1px solid #00ff41;background:rgba(0,0,0,.8);padding:12px 22px;text-decoration:none;font-size:16px;transition:.2s}
+  a:hover{background:#00ff41;color:#000;box-shadow:0 0 20px #00ff41}
+  #ov{display:none;position:fixed;inset:0;z-index:5;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:20px}
+  .box{border:1px solid #ff003c;box-shadow:0 0 25px #ff003c;padding:24px;max-width:380px;width:100%;text-align:center;color:#ff003c}
+  .box h2{margin:0 0 16px;text-shadow:0 0 10px #ff003c}
+  .bar{height:14px;border:1px solid #ff003c;margin-bottom:14px}.bar i{display:block;height:100%;width:0;background:#ff003c}
+  .box p{color:#00ff41;min-height:40px}
+  .box a{display:inline-block;color:#00ff41}
+  #ov.on{animation:alarm .5s infinite}
+  @keyframes alarm{50%{background:rgba(90,0,0,.95)}}
+  .box{animation:shake .15s infinite}
+  .box.calm{animation:none}
+  @keyframes shake{25%{transform:translate(3px,-2px)}75%{transform:translate(-3px,2px)}}
+  .box pre{text-align:left;color:#ff003c;margin:0 0 12px;min-height:110px;font-size:14px;white-space:pre-wrap}
+  .box h2.big{font-size:26px}
+  #sk{display:none;position:fixed;inset:0;z-index:9;align-items:center;justify-content:center;background:#000;font-size:min(85vw,80vh);line-height:1;text-shadow:0 0 40px #ff003c,0 0 90px #ff003c;filter:contrast(1.4) saturate(1.6);animation:pop .09s steps(2) infinite}
+  @keyframes pop{50%{transform:scale(1.12) translate(6px,-4px)}}
+</style>
+</head>
+<body>
+<canvas id="m"></canvas>
+<div class="wrap">
+  <h1 data-t="TROYANO">TROYANO</h1>
+  <div class="term"><span id="t"></span><span class="c">█</span></div>
+  <div class="links">
+    <a href="#" id="dl">[ DESCARGAR ]</a>
+  </div>
+  <div id="sk">💀</div>
+<div id="ov"><div class="box">
+    <h2 id="ot">INFILTRANDO SISTEMA...</h2>
+    <div class="bar"><i id="bi"></i></div>
+    <pre id="lg"></pre>
+    <p id="op"></p>
+    <div id="sc" style="display:none;flex-direction:column;gap:10px;align-items:center">
+      <a id="ig" href="https://www.instagram.com/eudy.gl/" target="_blank" rel="noopener">[ IR A MI INSTAGRAM ]</a>
+      <a id="tk" href="https://www.tiktok.com/@eudy147" target="_blank" rel="noopener">[ IR A MI TIKTOK ] @eudy147</a>
+    </div>
+  </div></div>
+</div>
+<script>
+// Lluvia estilo Matrix
+const cv=document.getElementById('m'),cx=cv.getContext('2d');
+let cols,drops;const ch="01アイウエオカキクケコ$#<>/\\{}".split(''),fs=16;
+function size(){cv.width=innerWidth;cv.height=innerHeight;cols=Math.floor(cv.width/fs);drops=Array(cols).fill(1)}
+size();addEventListener('resize',size);
+setInterval(()=>{
+  cx.fillStyle="rgba(0,0,0,.08)";cx.fillRect(0,0,cv.width,cv.height);
+  cx.fillStyle="#00ff41";cx.font=fs+"px monospace";
+  drops.forEach((y,i)=>{
+    cx.fillText(ch[Math.floor(Math.random()*ch.length)],i*fs,y*fs);
+    if(y*fs>cv.height&&Math.random()>.975)drops[i]=0;drops[i]++;
+  });
+},40);
+// Texto tipo terminal
+const lines=["> accediendo...","> sistema TROYANO activo","> encuentra mis redes:"];
+let l=0,c=0;const el=document.getElementById('t');
+(function type(){
+  if(l>=lines.length){setTimeout(()=>{el.textContent="";l=0;c=0;type()},4000);return}
+  if(c===0&&l>0)el.textContent+="\n";
+  if(c<lines[l].length){el.textContent+=lines[l][c++];setTimeout(type,60)}
+  else{l++;c=0;setTimeout(type,500)}
+})();
+el.style.whiteSpace="pre";
+</script>
+<script>
+document.getElementById('dl').onclick=e=>{
+  e.preventDefault();
+  const $=id=>document.getElementById(id),ov=$('ov'),box=ov.firstElementChild;
+  ov.style.display='flex';ov.classList.add('on');
+  try{navigator.vibrate&&navigator.vibrate([300,100,300,100,600])}catch(_){}
+  try{const A=new(window.AudioContext||window.webkitAudioContext)();let n=0;
+    const bp=setInterval(()=>{const o=A.createOscillator(),g=A.createGain();o.type='square';o.frequency.value=n%2?520:880;g.gain.value=.08;o.connect(g);g.connect(A.destination);o.start();o.stop(A.currentTime+.18);if(++n>12)clearInterval(bp)},230)}catch(_){}
+  const skull=(ms)=>{const k=$('sk');k.style.display='flex';
+    try{navigator.vibrate&&navigator.vibrate([500,80,300])}catch(_){}
+    try{const A=new(window.AudioContext||window.webkitAudioContext)(),n=A.sampleRate*ms/1000,buf=A.createBuffer(1,n,A.sampleRate),d=buf.getChannelData(0);
+      for(let j=0;j<n;j++)d[j]=(Math.random()*2-1)*(1-j/n);
+      const src=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain(),o=A.createOscillator(),og=A.createGain();
+      src.buffer=buf;f.type='lowpass';f.frequency.value=900;g.gain.value=.5;src.connect(f);f.connect(g);g.connect(A.destination);src.start();
+      o.type='sawtooth';o.frequency.setValueAtTime(90,A.currentTime);o.frequency.exponentialRampToValueAtTime(40,A.currentTime+ms/1000);og.gain.value=.25;o.connect(og);og.connect(A.destination);o.start();o.stop(A.currentTime+ms/1000)}catch(_){}
+    setTimeout(()=>k.style.display='none',ms)};
+  setTimeout(()=>skull(1000),1800);
+  const L=["> infiltrando sistema...","> saltando antivirus... OK","> accediendo a archivos... OK","> cámara: ACTIVADA","> contactos: COPIADOS","> te estoy viendo...","> TROYANO INSTALADO"];
+  let i=0,w=0;
+  const iv=setInterval(()=>{
+    w=Math.min(100,w+Math.random()*5+1);$('bi').style.width=w+'%';
+    if(i<L.length&&Math.random()<.3){$('lg').textContent+=L[i++]+"\n"}
+    if(w>=100&&i>=L.length){clearInterval(iv);
+      $('ot').textContent='☠ DISPOSITIVO INFECTADO ☠';$('ot').classList.add('big');
+      let c=5;$('op').style.color='#ff003c';
+      const cd=setInterval(()=>{
+        if(c>0){$('op').textContent='Borrando datos en '+c+'...';if(c===2)skull(1300);c--}
+        else{clearInterval(cd);ov.classList.remove('on');box.classList.add('calm');
+          box.style.borderColor='#00ff41';box.style.boxShadow='0 0 25px #00ff41';
+          $('ot').textContent='ÚLTIMA OPORTUNIDAD';$('ot').style.color='#00ff41';$('ot').style.textShadow='0 0 10px #00ff41';
+          $('lg').textContent='';$('op').style.color='#00ff41';
+          $('op').innerHTML='SÍGUEME EN ESTAS DOS CUENTAS O SI NO TE METO VIRUS 😈<br><small style="color:#7a7a7a;font-size:11px">(es una broma, no se instaló nada)</small>';
+          $('sc').style.display='flex'}
+      },1000);
+    }
+  },120);
+};
+</script>
+</body>
+</html>
